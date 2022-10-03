@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 function QuestionForm(props) {
   const [formData, setFormData] = useState({
     prompt: "",
@@ -9,7 +8,6 @@ function QuestionForm(props) {
     answer4: "",
     correctIndex: 0,
   });
-
   function handleChange(event) {
     setFormData({
       ...formData,
@@ -19,12 +17,34 @@ function QuestionForm(props) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(formData);
-  }
+// Create question data to be Posted in the same format as the data in the json-server file.
+    const newQuestion = {
+      prompt: formData.prompt,
+      answers: [
+        formData.answer1,
+        formData.answer2,
+        formData.answer3,
+        formData.answer4,
+      ],
+      correctIndex:formData.correctIndex,
+    };
 
+    //Implementing the post request using the new object.
+    fetch("http://localhost:4000/questions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newQuestion),
+    })
+    //Updating the state after.
+    .then ((resp)=> resp.json())
+    .then((data)=> setFormData(data));
+  }
+ // 
   return (
     <section>
-      <h1>New Question</h1>
+      <h1>Add New Question</h1>
       <form onSubmit={handleSubmit}>
         <label>
           Prompt:
